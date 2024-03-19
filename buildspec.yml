@@ -1,25 +1,29 @@
 version: 0.2
+
 phases:
- install:
-   commands:
-     - curl -s https://getcomposer.org/installer | php
-     - mv  composer.phar /usr/local/bin/composer
-     - php --version
-
-
- build:
-   commands:
-     - echo Build started on `date`
-     - echo Installing composer deps
-     - composer install
-     - cp extra/.env ./
-     - php artisan cache:clear
-
- post_build:
-   commands:
-     - echo Build completed on `date`
+  install:
+    runtime-versions:
+      php: 8.2
+    commands:
+      - echo "Installing dependencies..."
+    #   - curl -sS https://getcomposer.org/installer | php
+    #   - php composer.phar install
+  pre_build:
+    commands:
+      - echo "Preparing for build..."
+  build:
+    commands:
+      - echo "Building PHP application..."
+      # Thực hiện các lệnh cần thiết để xây dựng ứng dụng PHP của bạn, ví dụ:
+      - php -l controllers/*.php models/*.php views/*.php # Kiểm tra cú pháp PHP của các file trong các thư mục
+    #   - phpunit tests/ # Chạy unit tests nếu có
+  post_build:
+    commands:
+      - echo "Build completed successfully!"
+      # Thực hiện các lệnh hoặc script cần thiết sau khi build, ví dụ: 
+    #   - cp -r controllers models views /path/to/deployment/directory # Sao chép các thư mục controllers, models và views vào thư mục triển khai
 artifacts:
-  type: zip
   files:
-    - '**/*'
-  name: clyde-$(date +%Y-%m-%d) 
+    - controllers/**/*
+    - models/**/*
+    - views/**/*
